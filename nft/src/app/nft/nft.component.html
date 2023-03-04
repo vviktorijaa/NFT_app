@@ -1,0 +1,59 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-5">
+  <div class="row text-center mb-5">
+    <div class="col">
+      <div class="form-group">
+        <button class="btn btn-primary">Connect with contract</button>
+      </div>
+      <small id="contractArea" style="visibility: hidden; color: #a80f0f"></small>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+
+    <div class="col-5">
+      <button class="btn btn-primary">Get all NFTs</button>
+
+      <br><br><br>
+
+      <form>
+        <div class="form-group">
+          <label for="nftId">Get NFT by ID</label>
+          <input type="text" class="form-control w-25" id="nftId" placeholder="NFT ID">
+          <small id="nftExists" style="visibility: hidden; color: #a80f0f"></small>
+        </div>
+      </form>
+      <button class="btn btn-primary mt-2">Get NFT Info</button>
+    </div>
+
+    <div class="col-5">
+      <form>
+        <div class="form-group mb-3">
+          <label for="nftName">NFT Name</label>
+          <input type="text" class="form-control" id="nftName" placeholder="NFT name">
+        </div>
+        <div class="form-group mb-3">
+          <label for="nftDescription">NFT Description</label>
+          <input type="text" class="form-control" id="nftDescription" placeholder="NFT Description">
+        </div>
+        <div class="form-group">
+          <label for="nftPrice">NFT Price</label>
+          <input type="number" class="form-control" id="nftPrice" placeholder="NFT price">
+        </div>
+      </form>
+      <button class="btn btn-primary mt-2">Add NFT</button>
+      <small id="addNftStatus" style="visibility: hidden; color: #a80f0f"></small>
+    </div>
+
+    <div class="col"></div>
+  </div>
+
+  <div class="row" id="transferUnsuccessful" style="visibility: hidden">
+    <div class="col">
+      <h5>Transfer Unsuccessful</h5>
+    </div>
+  </div>
+
+</div>

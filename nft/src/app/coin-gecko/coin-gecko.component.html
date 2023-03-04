@@ -1,0 +1,36 @@
+<app-navbar></app-navbar>
+<div class="container">
+  <div class="row">
+    <div class="col text-center mt-4">
+      <h3>Cryptocurrency Prices by Market Cap</h3>
+    </div>
+  </div>
+  <div class="row mt-5 mb-5" id="displayData">
+    <table class="table table-striped text-center" style="font-size: small">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" colspan="2">Coin</th>
+        <th scope="col">Mkt</th>
+        <th scope="col">Mkt Change %</th>
+        <th scope="col">Max Supply</th>
+        <th scope="col">Price Change % (24h)</th>
+        <th scope="col">Total Supply</th>
+        <th scope="col">Total Volume</th>
+      </tr>
+      </thead>
+      <tbody id="tableBody">
+      <tr *ngFor="let d of data; index as i">
+              <td>{{i+1}}</td>
+              <td colspan="2"><img src="{{d.image}}" style="height: 30px; width: 30px" alt="{{d.id}}"></td>
+              <td>{{d.market_cap}}</td>
+              <td>{{d.market_cap_change_percentage_24h.toFixed(2)}}</td>
+              <td>{{d.max_supply}}</td>
+              <td>{{d.price_change_percentage_24h.toFixed(2)}}</td>
+              <td>{{d.total_supply}}</td>
+              <td>{{d.total_volume}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
