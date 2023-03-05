@@ -7,10 +7,10 @@
   </div>
 
   <div class="row text-center mt-4">
-    <div class="col-3"></div>
+    <div class="col-2"></div>
     <div class="col">
-      <form #f="ngForm" (ngSubmit)="f.form.valid" style="display: inline-block;">
-        <select class="form-select w-50" id="chain" name="chain" style="display: inline-block;">
+      <form [formGroup]="form" style="display: inline-block">
+        <select class="form-select w-50" id="chain" name="chain" style="display: inline-block">
           <option value="" selected>Choose chain</option>
           <option value="0x1">ETH_MAINNET</option>
           <option value="0x3">ETH_ROPSTEN</option>
@@ -28,42 +28,217 @@
           <option value="0x19">CRONOS_MAINNET</option>
           <option value="0x152">CRONOS_TESTNET</option>
         </select>
-        <input id="address" type="text" class="form-control w-50" placeholder="Input address" aria-describedby="basic-addon1" name="address" style="display: inline-block;">
+        <input required
+               formControlName="address"
+               id="address"
+               type="text"
+               class="form-control w-50"
+               placeholder="Input address"
+               style="display: inline-block">
+
+        <div class="row mt-4">
+          <div class="col">
+            <div class="btn-group">
+              <button (click)="getTransactions()" style="height: 60px" class="btn btn-primary">Get transactions</button>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="btn-group">
+              <button (click)="getNativeBalance()" style="height: 60px" class="btn btn-primary">Get native balance</button>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="btn-group">
+              <button (click)="getTokenBalance()" style="height: 60px;" class="btn btn-primary">Get token balances</button>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="btn-group">
+              <button (click)="getNfts()" style="height: 60px" class="btn btn-primary">Get NFTs</button>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="btn-group">
+              <button (click)="getNftTransfers()" style="height: 60px" class="btn btn-primary">Get NFT transfers</button>
+            </div>
+          </div>
+        </div>
+
       </form>
     </div>
-    <div class="col-3"></div>
+    <div class="col-2"></div>
   </div>
 
-  <div class="row m-4 text-center">
+  <div class="row">
     <div class="col">
-      <div class="btn-group">
-        <button style="height: 38px; margin-right: 10px;" class="btn btn-primary">Get transactions</button>
-      </div>
-      <div class="btn-group">
-        <button style="height: 38px; margin-right: 10px;" class="btn btn-primary">Get native balance</button>
-      </div>
-      <div class="btn-group">
-        <button style="height: 38px; margin-right: 10px;" class="btn btn-primary">Get token balances</button>
-      </div>
-      <div class="btn-group">
-        <button style="height: 38px; margin-right: 10px;" class="btn btn-primary">Get NFTs</button>
-      </div>
-      <div class="btn-group">
-        <button style="height: 38px; margin-right: 10px;" class="btn btn-primary">Get NFT transfers</button>
-      </div>
+      <div *ngIf="this.data == undefined; then thenHeader else elseHeader"></div>
+
+      <ng-template #thenHeader>
+      <!--TODO: undefined data error-->
+      </ng-template>
+
+      <ng-template #elseHeader>
+        <div *ngIf="this.data.result == undefined; then thenHeader else elseHeader"></div>
+
+        <!--native balance | token balances-->
+        <ng-template #thenHeader>
+          <div *ngIf="this.data.balance == undefined; then thenHeader else elseHeader"></div>
+
+          <!--token balances-->
+          <ng-template #thenHeader>
+            <h5 class="mt-5">Token Balances</h5>
+            <table class="table table-striped table-bordered mx-auto w-75 mt-3">
+              <thead class="bg-light">
+              <tr>
+                <th scope="col">Token Address</th>
+                <th scope="col">Name</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Logo</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+              <tr *ngFor="let d of data | paginate: {itemsPerPage: 5,
+                                                          currentPage: p,
+                                                          totalItems: data?.length}">
+                <td>{{d.token_address}}</td>
+
+                <td>{{d.name}}</td>
+                <td>{{d.symbol}}</td>
+                <td>{{d.balance}}</td>
+                <td>
+                  <div *ngIf="d.logo == null; then thenImage else elseImage"></div>
+                  <ng-template #thenImage></ng-template>
+                  <ng-template #elseImage>
+                    <img src="{{d.logo}}" style="height: 40px; width: 40px">
+                  </ng-template>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </ng-template>
+
+          <!--native balance-->
+          <ng-template #elseHeader>
+            <h5 class="mt-5">Native Balance</h5>
+            <table class="table table-striped table-bordered mx-auto w-25 mt-3">
+              <thead class="bg-light">
+              <tr>
+                <th scope="col">Balance</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+              <tr>
+                <td>{{this.data.balance}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </ng-template>
+        </ng-template>
+
+        <!--get transactions-->
+        <!--get nfts-->
+        <!--get nft transfers -->
+        <ng-template #elseHeader>
+          <div *ngIf="this.data.result[0].contract_type != undefined && this.data.result[0].transaction_type == undefined; then thenHeader else elseNfts"></div>
+
+          <!--get nfts-->
+          <ng-template #thenHeader>
+            <h5 class="mt-5">NFTs</h5>
+            <table class="table table-striped table-bordered mx-auto w-50 mt-3">
+              <thead class="bg-light">
+              <tr>
+                <th scope="col">Token ID</th>
+                <th scope="col">Token Name</th>
+                <th scope="col">Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+              <tr *ngFor="let d of data.result | paginate: {itemsPerPage: 5,
+                                                                 currentPage: p,
+                                                                 totalItems: data.result?.length}">
+                <td>{{d.token_id}}</td>
+                <td>{{d.name}}</td>
+                <td>
+                  <a class="btn btn-sm btn-success">See NFT details</a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </ng-template>
+
+          <!--get transactions | get nft transfers-->
+          <ng-template #elseNfts>
+            <div *ngIf="this.data.result[0].transaction_type == undefined; then thenHeader else elseHeader"></div>
+
+            <!--get transactions-->
+            <ng-template #thenHeader>
+              <h5 class="mt-5">Transactions</h5>
+              <table class="table table-striped table-bordered mx-auto w-50 mt-3">
+                <thead class="bg-light">
+                <tr>
+                  <th scope="col">Transaction hash</th>
+                  <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <tr *ngFor="let d of data.result | paginate: {itemsPerPage: 5,
+                                                                   currentPage: p,
+                                                                   totalItems: data.result?.length}">
+                  <td>{{d.transaction_hash}}</td>
+
+                  <td>
+                    <a class="btn btn-sm btn-success">See transaction details</a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </ng-template>
+
+            <!--get nft transfers-->
+            <ng-template #elseHeader>
+              <h5 class="mt-5">NFT Transfers</h5>
+              <table class="table table-striped table-bordered mx-auto w-50 mt-3">
+                <thead class="bg-light">
+                <tr>
+                  <th scope="col">Token ID</th>
+                  <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <tr *ngFor="let d of data.result | paginate: {itemsPerPage: 5,
+                                                                   currentPage: p,
+                                                                   totalItems: data.result?.length}">
+                  <td>{{d.token_id}}</td>
+
+                  <td>
+                    <a class="btn btn-sm btn-success">See transaction details</a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </ng-template>
+        </ng-template>
+      </ng-template>
     </div>
   </div>
 
-  <div class="row" id="gettingDataContainer" style="visibility: hidden">
-    <div class="col">
-      <ul class="list-inline">
-        <li class="list-inline-item" id="gettingData"></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="row" id="displayContainer" style="visibility: hidden">
-    <div class="col" id="tableContent">
+  <div class="row">
+    <div class="col mx-auto mt-3">
+      <pagination-controls (pageChange)="p = $event"
+                           previousLabel="Back"
+                           nextLabel="Next">
+      </pagination-controls>
     </div>
   </div>
 
