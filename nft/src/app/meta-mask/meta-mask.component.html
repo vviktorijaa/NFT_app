@@ -1,10 +1,27 @@
 <app-navbar></app-navbar>
 <div class="container-fluid mt-5 text-center">
-  <div class="row mt-5 mb-5">
+  <div class="row mt-5 mb-2">
     <div class="col">
       <h4>Connect with MetaMask</h4>
-      <a class="btn btn-danger mt-3 text-white" id="metamaskButton" onclick="connect()">Connect</a>
-      <h6 id="walletID" class="mt-4">Your wallet is not connected yet</h6>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col ">
+      <img src="/assets/metamask-logo.png" alt="metamask logo" class="img-thumbnail" style="width: 150px; height: 150px">
+    </div>
+  </div>
+
+  <div class="row mt-2 mb-5">
+    <div class="col">
+      <div *ngIf="this.accounts == undefined; then thenHeader else elseHeader"></div>
+      <ng-template #thenHeader>
+        <a class="btn btn-danger mt-3 text-white" id="metamaskButton" (click)="connect()">Connect</a>
+        <h6 class="mt-4">Your wallet is not connected yet</h6>
+      </ng-template>
+      <ng-template #elseHeader>
+        <h6 class="mt-4">Wallet connected: {{accounts}}</h6>
+      </ng-template>
     </div>
   </div>
 </div>
